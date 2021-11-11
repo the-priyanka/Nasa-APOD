@@ -41,8 +41,19 @@ function createDOMNodes(page) {
     // save text
     let saveText = document.createElement("p");
     saveText.classList.add("clickable");
-    saveText.textContent = "Add to Favorites";
-    saveText.setAttribute("onclick", `saveFavorite("${result.url}")`);
+    if (page === "results") {
+      saveText.textContent = "Add to Favorites";
+      saveText.setAttribute(
+        "onclick",
+        `saveFavorite("${result.url}")`
+      );
+    } else {
+      saveText.textContent = "Remove Favorite";
+      saveText.setAttribute(
+        "onclick",
+        `removeFavorite("${result.url}" )`
+      );
+    }
     // card text
     let cardText = document.createElement("p");
     cardText.textContent = result.explanation;
@@ -73,6 +84,7 @@ function updateDom(page) {
     favorites = JSON.parse(localStorage.getItem("nasaFavorites"));
     console.log("Favorites from localStorage", favorites);
   }
+  imageContainer.textContent = "";
   createDOMNodes(page);
 }
 
@@ -103,6 +115,16 @@ function saveFavorite(itemUrl) {
       );
     }
   });
+}
+
+// Remove item from favorites
+function removeFavorite(itemUrl) {
+  if (favorites[itemUrl]) {
+    delete favorites[itemUrl];
+    // set favorites in localStorage
+    localStorage.setItem("nasaFavorites", JSON.stringify(favorites));
+    updateDom("favorites");
+  }
 }
 
 getNasaPicture();
